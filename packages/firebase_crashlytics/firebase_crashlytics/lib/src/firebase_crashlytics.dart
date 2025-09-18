@@ -76,11 +76,21 @@ class FirebaseCrashlytics extends FirebasePluginPlatform {
   }
 
   /// Submits a Crashlytics report of a caught error.
+  ///
+  /// Note: On iOS, this method is a no-op to prevent conflicts with native iOS
+  /// Firebase Crashlytics. Use native iOS Crashlytics for crash reporting on iOS.
   Future<void> recordError(dynamic exception, StackTrace? stack,
       {dynamic reason,
       Iterable<Object> information = const [],
       bool? printDetails,
       bool fatal = false}) async {
+    // iOS no-op check - warn developers
+    if (Platform.isIOS) {
+      if (kDebugMode) {
+        print('WARNING: Firebase Crashlytics Flutter plugin is disabled on iOS to prevent conflicts with native iOS implementation. Use native iOS Crashlytics instead.');
+      }
+      return;
+    }
     // Use the debug flag if printDetails is not provided
     printDetails ??= kDebugMode;
 
@@ -169,7 +179,14 @@ class FirebaseCrashlytics extends FirebasePluginPlatform {
   /// Newline characters are stripped and extremely long messages are truncated.
   /// The maximum log size is 64k. If exceeded, the log rolls such that messages
   /// are removed, starting from the oldest.
+  ///
+  /// Note: On iOS, this method is a no-op to prevent conflicts with native iOS
+  /// Firebase Crashlytics. Use native iOS Crashlytics for logging on iOS.
   Future<void> log(String message) async {
+    // iOS no-op check
+    if (Platform.isIOS) {
+      return;
+    }
     return _delegate.log(message);
   }
 
@@ -204,7 +221,14 @@ class FirebaseCrashlytics extends FirebasePluginPlatform {
   ///
   /// Ensure you have collected permission to store any personal identifiable information
   /// from the user if required.
+  ///
+  /// Note: On iOS, this method is a no-op to prevent conflicts with native iOS
+  /// Firebase Crashlytics. Set user identifier via native iOS Crashlytics instead.
   Future<void> setUserIdentifier(String identifier) {
+    // iOS no-op check
+    if (Platform.isIOS) {
+      return Future.value();
+    }
     return _delegate.setUserIdentifier(identifier);
   }
 
@@ -220,8 +244,15 @@ class FirebaseCrashlytics extends FirebasePluginPlatform {
   /// ignored. Keys or values that exceed 1024 characters are truncated.
   ///
   /// The value can only be a type [int], [num], [String] or [bool].
+  ///
+  /// Note: On iOS, this method is a no-op to prevent conflicts with native iOS
+  /// Firebase Crashlytics. Set custom keys via native iOS Crashlytics instead.
   Future<void> setCustomKey(String key, Object value) async {
     assert(value is int || value is num || value is String || value is bool);
+    // iOS no-op check
+    if (Platform.isIOS) {
+      return;
+    }
     return _delegate.setCustomKey(key, value.toString());
   }
 }
