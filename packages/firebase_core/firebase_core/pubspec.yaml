@@ -34,10 +34,6 @@ flutter:
       android:
         package: io.flutter.plugins.firebase.core
         pluginClass: FlutterFirebaseCorePlugin
-      ios:
-        pluginClass: FLTFirebaseCorePlugin
-      macos:
-        pluginClass: FLTFirebaseCorePlugin
       web:
         default_package: firebase_core_web
       windows:
