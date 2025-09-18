@@ -1,0 +1,16 @@
+name: flutterfire
+id: ari:cloud:compass:fca6a80f-888b-4079-82e6-3c2f61c788e2:component/4d010f50-96c4-48c0-bab5-a3dd5112b464/194b4d77-16bb-4840-884f-162b021355cc
+description: 🔥 A collection of Firebase plugins for Flutter apps.
+configVersion: 1
+typeId: SERVICE
+fields:
+  tier: 4
+links:
+  - name: null
+    type: REPOSITORY
+    url: https://github.com/motain/flutterfire
+relationships:
+  DEPENDS_ON: []
+labels:
+  - source:github
+customFields: null
