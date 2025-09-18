@@ -21,7 +21,11 @@ dependencies:
       url: https://github.com/motain/flutterfire.git
       path: packages/firebase_core/firebase_core_platform_interface
       ref: main
-  firebase_core_web: ^3.1.0
+  firebase_core_web:
+    git:
+      url: https://github.com/motain/flutterfire.git
+      path: packages/firebase_core/firebase_core_web
+      ref: main
   flutter:
     sdk: flutter
   meta: ^1.8.0
