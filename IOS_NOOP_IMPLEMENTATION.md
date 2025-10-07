@@ -16,6 +16,11 @@ This fork of FlutterFire has been modified to provide no-op (no operation) imple
 - Maintains plugin registration to prevent runtime errors
 - Returns empty/mock data for all Firebase Core operations
 
+#### Header Files
+- `FLTFirebasePlugin.h` - Removed Firebase import, added forward declaration for FIRApp
+- `FLTFirebasePluginRegistry.m` - Commented out Firebase imports and library registration
+- All Firebase SDK imports removed from headers to prevent CocoaPods from pulling dependencies
+
 ### 2. Firebase Crashlytics iOS Changes
 
 #### Podspec (`packages/firebase_crashlytics/firebase_crashlytics/ios/firebase_crashlytics.podspec`)
@@ -28,6 +33,11 @@ This fork of FlutterFire has been modified to provide no-op (no operation) imple
 - All methods return success without performing any operations
 - Status queries return false/empty responses
 - Crash reports are only sent from Android
+
+#### Header Files
+- `Crashlytics_Platform.h` - Removed @import FirebaseCrashlytics
+- `ExceptionModel_Platform.h` - Removed @import FirebaseCrashlytics
+- All Firebase SDK imports removed to prevent CocoaPods dependency resolution
 
 ### 3. Dependency Updates
 
