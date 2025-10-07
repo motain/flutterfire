@@ -14,15 +14,18 @@
  * limitations under the License.
  */
 //
-//  Crashlytics_ExceptionModel.h
+//  ExceptionModel_Platform.h
 //  Crashlytics
 //
+//  iOS No-Op Implementation - No Firebase imports
 
-@import FirebaseCrashlytics;
+#import <Foundation/Foundation.h>
 
-@interface FIRExceptionModel (Platform)
+// NO Firebase imports for no-op implementation
+// @import FirebaseCrashlytics;  // Commented out to avoid conflicts with native iOS Firebase
 
-@property(nonatomic) BOOL isFatal;
-@property(nonatomic) BOOL onDemand;
-
-@end
+// No-op stubs - these are not used in the no-op implementation
+// @interface FIRExceptionModel (Platform)
+// @property(nonatomic) BOOL isFatal;
+// @property(nonatomic) BOOL onDemand;
+// @end

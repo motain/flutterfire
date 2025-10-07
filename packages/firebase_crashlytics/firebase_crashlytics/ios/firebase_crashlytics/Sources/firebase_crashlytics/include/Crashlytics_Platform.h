@@ -17,16 +17,18 @@
 //  Crashlytics_Platform.h
 //  Crashlytics
 //
+//  iOS No-Op Implementation - No Firebase imports
 
-@import FirebaseCrashlytics;
+#import <Foundation/Foundation.h>
 
-@interface FIRCrashlytics (Platform)
+// NO Firebase imports for no-op implementation
+// @import FirebaseCrashlytics;  // Commented out to avoid conflicts with native iOS Firebase
 
-@property(nonatomic, strong, nullable) NSString* developmentPlatformName;
-@property(nonatomic, strong, nullable) NSString* developmentPlatformVersion;
-
-- (void)recordOnDemandExceptionModel:(FIRExceptionModel* _Nonnull)exceptionModel;
-
-@end
-
-void FIRCLSUserLoggingRecordInternalKeyValue(NSString* _Nullable key, id _Nullable value);
+// No-op stubs - these are not used in the no-op implementation
+// @interface FIRCrashlytics (Platform)
+// @property(nonatomic, strong, nullable) NSString* developmentPlatformName;
+// @property(nonatomic, strong, nullable) NSString* developmentPlatformVersion;
+// - (void)recordOnDemandExceptionModel:(FIRExceptionModel* _Nonnull)exceptionModel;
+// @end
+//
+// void FIRCLSUserLoggingRecordInternalKeyValue(NSString* _Nullable key, id _Nullable value);

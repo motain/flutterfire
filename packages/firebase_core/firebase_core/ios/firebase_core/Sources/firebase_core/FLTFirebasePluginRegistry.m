@@ -8,13 +8,14 @@
 #import "include/FLTFirebasePluginRegistry.h"
 #endif
 
-#if __has_include(<FirebaseCore/FIRAppInternal.h>)
-#import <FirebaseCore/FIRAppInternal.h>
-#define REGISTER_LIB
-#elif __has_include(<FirebaseCoreExtension/FIRAppInternal.h>)
-#import <FirebaseCoreExtension/FIRAppInternal.h>
-#define REGISTER_LIB
-#endif
+// iOS No-Op Implementation - No Firebase imports
+// #if __has_include(<FirebaseCore/FIRAppInternal.h>)
+// #import <FirebaseCore/FIRAppInternal.h>
+// #define REGISTER_LIB
+// #elif __has_include(<FirebaseCoreExtension/FIRAppInternal.h>)
+// #import <FirebaseCoreExtension/FIRAppInternal.h>
+// #define REGISTER_LIB
+// #endif
 
 @implementation FLTFirebasePluginRegistry {
   NSMutableDictionary<NSString *, id<FLTFirebasePlugin>> *registeredPlugins;
