@@ -33,8 +33,13 @@ This fork of FlutterFire has been modified to provide no-op (no operation) imple
 
 All pubspec.yaml files have been updated to use path references to this fork:
 - `firebase_core/firebase_core/pubspec.yaml` - Uses local path references
+- `firebase_core/firebase_core_web/pubspec.yaml` - Uses local path references
 - `firebase_crashlytics/firebase_crashlytics/pubspec.yaml` - Uses local path references
+- `firebase_crashlytics/firebase_crashlytics_platform_interface/pubspec.yaml` - Uses local path references
+- `_flutterfire_internals/pubspec.yaml` - Uses local path references
 - Example apps use path references to their parent packages
+
+This ensures all transitive dependencies are resolved from the fork rather than pub.dev, preventing version conflicts.
 
 ## How it works
 
