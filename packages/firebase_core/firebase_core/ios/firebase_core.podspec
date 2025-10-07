@@ -32,8 +32,8 @@ Pod::Spec.new do |s|
   # Flutter dependencies
   s.dependency 'Flutter'
 
-  # Firebase dependencies
-  s.dependency 'Firebase/CoreOnly', firebase_sdk_version
+  # NO Firebase dependencies - this is a no-op version to prevent conflicts with native iOS Firebase
+  # s.dependency 'Firebase/CoreOnly', firebase_sdk_version  # Commented out to avoid conflicts
 
   s.static_framework = true
   s.pod_target_xcconfig = {

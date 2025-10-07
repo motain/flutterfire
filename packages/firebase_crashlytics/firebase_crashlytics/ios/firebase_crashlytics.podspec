@@ -3,11 +3,11 @@ require 'yaml'
 pubspec = YAML.load_file(File.join('..', 'pubspec.yaml'))
 library_version = pubspec['version'].gsub('+', '-')
 
-# Add upload-symbols script to the Flutter target.
-current_dir = Dir.pwd
-calling_dir = File.dirname(__FILE__)
-project_dir = calling_dir.slice(0..(calling_dir.index('/.symlinks')))
-system("ruby #{current_dir}/crashlytics_add_upload_symbols -f -p #{project_dir} -n Runner.xcodeproj")
+# NO upload-symbols script for no-op iOS implementation
+# current_dir = Dir.pwd
+# calling_dir = File.dirname(__FILE__)
+# project_dir = calling_dir.slice(0..(calling_dir.index('/.symlinks')))
+# system("ruby #{current_dir}/crashlytics_add_upload_symbols -f -p #{project_dir} -n Runner.xcodeproj")
 
 if defined?($FirebaseSDKVersion)
   Pod::UI.puts "#{pubspec['name']}: Using user specified Firebase SDK version '#{$FirebaseSDKVersion}'"
@@ -38,7 +38,8 @@ Pod::Spec.new do |s|
 
   s.dependency 'Flutter'
   s.dependency 'firebase_core'
-  s.dependency 'Firebase/Crashlytics', firebase_sdk_version
+  # NO Firebase/Crashlytics dependency - this is a no-op version to prevent conflicts with native iOS Firebase Crashlytics
+  # s.dependency 'Firebase/Crashlytics', firebase_sdk_version  # Commented out to avoid conflicts
 
   s.static_framework = true
   s.pod_target_xcconfig = {

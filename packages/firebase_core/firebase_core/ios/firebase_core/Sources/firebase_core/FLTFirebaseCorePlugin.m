@@ -2,6 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+// iOS No-Op Implementation
+// This implementation does nothing to prevent conflicts with native iOS Firebase
+
 #if __has_include("include/firebase_core/FLTFirebaseCorePlugin.h")
 #import "include/firebase_core/FLTFirebaseCorePlugin.h"
 #else
@@ -19,6 +22,8 @@
 #else
 #import "include/messages.g.h"
 #endif
+
+// NO Firebase imports - this is a no-op implementation for iOS
 
 @implementation FLTFirebaseCorePlugin {
   BOOL _coreInitialized;
@@ -46,20 +51,8 @@
     // Register with the Flutter Firebase plugin registry.
     [[FLTFirebasePluginRegistry sharedInstance] registerFirebasePlugin:instance];
 
-    // Initialize default Firebase app, but only if the plist file options
-    // exist.
-    //  - If it is missing then there is no default app discovered in Dart and
-    //  Dart throws an error.
-    //  - Without this the iOS/MacOS app would crash immediately on calling
-    //  [FIRApp configure] without
-    //    providing helpful context about the crash to the user.
-    //
-    // Default app exists check is for backwards compatibility of legacy
-    // FlutterFire plugins that call [FIRApp configure]; themselves internally.
-    FIROptions *options = [FIROptions defaultOptions];
-    if (options != nil && [FIRApp allApps][@"__FIRAPP_DEFAULT"] == nil) {
-      [FIRApp configureWithOptions:options];
-    }
+    // NO Firebase initialization - this is a no-op implementation
+    NSLog(@"Firebase Core Flutter plugin: iOS no-op implementation loaded. Use native iOS Firebase Core instead.");
   });
 
   return instance;
@@ -81,177 +74,112 @@ static NSMutableDictionary<NSString *, NSString *> *customAuthDomains;
 
 #pragma mark - Helpers
 
-- (CoreFirebaseOptions *)optionsFromFIROptions:(FIROptions *)options {
+- (CoreFirebaseOptions *)optionsFromFIROptions:(NSDictionary *)options {
+  // Create mock options for no-op implementation
   CoreFirebaseOptions *pigeonOptions = [CoreFirebaseOptions alloc];
-  pigeonOptions.apiKey = (id)options.APIKey ?: [NSNull null];
-  pigeonOptions.appId = (id)options.googleAppID ?: [NSNull null];
-  pigeonOptions.messagingSenderId = (id)options.GCMSenderID ?: [NSNull null];
-  pigeonOptions.projectId = (id)options.projectID ?: [NSNull null];
-  pigeonOptions.databaseURL = (id)options.databaseURL ?: [NSNull null];
-  pigeonOptions.storageBucket = (id)options.storageBucket ?: [NSNull null];
+  pigeonOptions.apiKey = [NSNull null];
+  pigeonOptions.appId = [NSNull null];
+  pigeonOptions.messagingSenderId = [NSNull null];
+  pigeonOptions.projectId = [NSNull null];
+  pigeonOptions.databaseURL = [NSNull null];
+  pigeonOptions.storageBucket = [NSNull null];
   pigeonOptions.deepLinkURLScheme = [NSNull null];
-  pigeonOptions.iosBundleId = (id)options.bundleID ?: [NSNull null];
-  pigeonOptions.iosClientId = (id)options.clientID ?: [NSNull null];
-  pigeonOptions.appGroupId = (id)options.appGroupID ?: [NSNull null];
+  pigeonOptions.iosBundleId = [[NSBundle mainBundle] bundleIdentifier] ?: [NSNull null];
+  pigeonOptions.iosClientId = [NSNull null];
+  pigeonOptions.appGroupId = [NSNull null];
   return pigeonOptions;
 }
 
-- (CoreInitializeResponse *)initializeResponseFromFIRApp:(FIRApp *)firebaseApp {
-  NSString *appNameDart = [FLTFirebasePlugin firebaseAppNameFromIosName:firebaseApp.name];
+- (CoreInitializeResponse *)initializeResponseFromAppName:(NSString *)appName {
   CoreInitializeResponse *response = [CoreInitializeResponse alloc];
-  response.name = appNameDart;
-  response.options = [self optionsFromFIROptions:firebaseApp.options];
-  response.isAutomaticDataCollectionEnabled = @(firebaseApp.isDataCollectionDefaultEnabled);
-  response.pluginConstants =
-      [[FLTFirebasePluginRegistry sharedInstance] pluginConstantsForFIRApp:firebaseApp];
-
+  response.name = appName ?: @"[DEFAULT]";
+  response.isAutomaticDataCollectionEnabled = @(NO);
+  response.options = [self optionsFromFIROptions:@{}];
+  response.pluginConstants = @{};
   return response;
+}
+
+#pragma mark - Firebase Core Host API
+
+// No-op implementation - returns mock initialized state
+- (void)initializeCoreWithCompletion:(void (^)(CoreInitializeResponse *_Nullable,
+                                                FlutterError *_Nullable))completion {
+  // Create a mock response indicating the core is initialized
+  CoreInitializeResponse *response = [self initializeResponseFromAppName:@"[DEFAULT]"];
+  completion(response, nil);
+}
+
+// No-op implementation - returns mock app information
+- (void)initializeAppAppName:(NSString *)appName
+           initializeAppRequest:(CoreInitializeRequest *)request
+                      completion:(void (^)(CoreInitializeResponse *_Nullable,
+                                           FlutterError *_Nullable))completion {
+  // Create a mock response for the app
+  CoreInitializeResponse *response = [self initializeResponseFromAppName:appName];
+  if (request.options) {
+    response.options = request.options;
+  }
+  completion(response, nil);
+}
+
+// No-op implementation - returns empty options response
+- (void)optionsFromResourceWithCompletion:
+    (void (^)(CoreFirebaseOptions *_Nullable, FlutterError *_Nullable))completion {
+  // Return mock options
+  CoreFirebaseOptions *options = [self optionsFromFIROptions:@{}];
+  completion(options, nil);
+}
+
+#pragma mark - Firebase App Host API
+
+// No-op implementation - does nothing
+- (void)deleteAppApp:(NSString *)appName
+          completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion {
+  // Just return success
+  completion(@(YES), nil);
+}
+
+// No-op implementation - does nothing
+- (void)setAutomaticDataCollectionEnabledAppName:(NSString *)appName
+                                          enabled:(NSNumber *)enabled
+                                       completion:(void (^)(NSNumber *_Nullable,
+                                                             FlutterError *_Nullable))completion {
+  // Just return success
+  completion(@(YES), nil);
+}
+
+// No-op implementation - does nothing
+- (void)setAutomaticResourceManagementEnabledAppName:(NSString *)appName
+                                              enabled:(NSNumber *)enabled
+                                           completion:
+                                               (void (^)(NSNumber *_Nullable,
+                                                         FlutterError *_Nullable))completion {
+  // Just return success
+  completion(@(YES), nil);
 }
 
 #pragma mark - FLTFirebasePlugin
 
 - (void)didReinitializeFirebaseCore:(void (^)(void))completion {
+  // No-op: no reinitialization needed
   completion();
 }
 
-- (NSDictionary *_Nonnull)pluginConstantsForFIRApp:(FIRApp *)firebase_app {
+- (NSDictionary *_Nonnull)pluginConstantsForFIRApp:(FIRApp *)firebaseApp {
+  // Return empty constants
   return @{};
 }
 
 - (NSString *_Nonnull)firebaseLibraryName {
-  return @LIBRARY_NAME;
+  return LIBRARY_NAME;
 }
 
 - (NSString *_Nonnull)firebaseLibraryVersion {
-  return @LIBRARY_VERSION;
+  return LIBRARY_VERSION;
 }
 
 - (NSString *_Nonnull)flutterChannelName {
-  // The pigeon channel depends on each function
-  return @"dev.flutter.pigeon.FirebaseCoreHostApi.initializeApp";
-}
-
-#pragma mark - API
-
-- (void)initializeAppAppName:(nonnull NSString *)appName
-        initializeAppRequest:(nonnull CoreFirebaseOptions *)initializeAppRequest
-                  completion:(nonnull void (^)(CoreInitializeResponse *_Nullable,
-                                               FlutterError *_Nullable))completion {
-  NSString *appNameIos = [FLTFirebasePlugin firebaseAppNameFromDartName:appName];
-
-  if ([FLTFirebasePlugin firebaseAppNamed:appNameIos]) {
-    completion([self initializeResponseFromFIRApp:[FLTFirebasePlugin firebaseAppNamed:appNameIos]],
-               nil);
-    return;
-  }
-
-  NSString *appId = initializeAppRequest.appId;
-  NSString *messagingSenderId = initializeAppRequest.messagingSenderId;
-  FIROptions *options = [[FIROptions alloc] initWithGoogleAppID:appId
-                                                    GCMSenderID:messagingSenderId];
-
-  options.APIKey = initializeAppRequest.apiKey;
-  options.projectID = initializeAppRequest.projectId;
-
-  // kFirebaseOptionsDatabaseUrl
-  if (![initializeAppRequest.databaseURL isEqual:[NSNull null]]) {
-    options.databaseURL = initializeAppRequest.databaseURL;
-  }
-
-  // kFirebaseOptionsStorageBucket
-  if (![options.storageBucket isEqual:[NSNull null]]) {
-    options.storageBucket = initializeAppRequest.storageBucket;
-  }
-
-  // kFirebaseOptionsIosBundleId
-  if (![initializeAppRequest.iosBundleId isEqual:[NSNull null]]) {
-    options.bundleID = initializeAppRequest.iosBundleId;
-  }
-
-  // kFirebaseOptionsIosClientId
-  if (![initializeAppRequest.iosClientId isEqual:[NSNull null]]) {
-    options.clientID = initializeAppRequest.iosClientId;
-  }
-
-  // kFirebaseOptionsAppGroupId
-  if (![initializeAppRequest.appGroupId isEqual:[NSNull null]]) {
-    options.appGroupID = initializeAppRequest.appGroupId;
-  }
-
-  if (initializeAppRequest.authDomain != nil) {
-    customAuthDomains[appNameIos] = initializeAppRequest.authDomain;
-  }
-
-  [FIRApp configureWithName:appNameIos options:options];
-
-  completion([self initializeResponseFromFIRApp:[FIRApp appNamed:appNameIos]], nil);
-}
-
-- (void)initializeCoreWithCompletion:(nonnull void (^)(NSArray<CoreInitializeResponse *> *_Nullable,
-                                                       FlutterError *_Nullable))completion {
-  void (^initializeCoreBlock)(void) = ^void() {
-    NSDictionary<NSString *, FIRApp *> *firebaseApps = [FIRApp allApps];
-    NSMutableArray *firebaseAppsArray = [NSMutableArray arrayWithCapacity:firebaseApps.count];
-
-    for (NSString *appName in firebaseApps) {
-      FIRApp *firebaseApp = firebaseApps[appName];
-      [firebaseAppsArray addObject:[self initializeResponseFromFIRApp:firebaseApp]];
-    }
-
-    completion(firebaseAppsArray, nil);
-  };
-
-  if (!_coreInitialized) {
-    _coreInitialized = YES;
-    initializeCoreBlock();
-  } else {
-    [[FLTFirebasePluginRegistry sharedInstance] didReinitializeFirebaseCore:initializeCoreBlock];
-  }
-}
-
-- (void)optionsFromResourceWithCompletion:(nonnull void (^)(CoreFirebaseOptions *_Nullable,
-                                                            FlutterError *_Nullable))completion {
-  // Unsupported on iOS/MacOS.
-  completion(nil, nil);
-}
-
-- (void)deleteAppName:(nonnull NSString *)appName
-           completion:(nonnull void (^)(FlutterError *_Nullable))completion {
-  FIRApp *firebaseApp = [FLTFirebasePlugin firebaseAppNamed:appName];
-
-  if (firebaseApp) {
-    [firebaseApp deleteApp:^(BOOL success) {
-      if (success) {
-        completion(nil);
-      } else {
-        completion([FlutterError errorWithCode:@"delete-failed"
-                                       message:@"Failed to delete a Firebase app instance."
-                                       details:nil]);
-      }
-    }];
-  } else {
-    completion(nil);
-  }
-}
-
-- (void)setAutomaticDataCollectionEnabledAppName:(nonnull NSString *)appName
-                                         enabled:(BOOL)enabled
-                                      completion:
-                                          (nonnull void (^)(FlutterError *_Nullable))completion {
-  FIRApp *firebaseApp = [FLTFirebasePlugin firebaseAppNamed:appName];
-  if (firebaseApp) {
-    [firebaseApp setDataCollectionDefaultEnabled:enabled];
-  }
-
-  completion(nil);
-}
-
-- (void)setAutomaticResourceManagementEnabledAppName:(nonnull NSString *)appName
-                                             enabled:(BOOL)enabled
-                                          completion:(nonnull void (^)(FlutterError *_Nullable))
-                                                         completion {
-  // Unsupported on iOS/MacOS.
-  completion(nil);
+  return @"plugins.flutter.io/firebase_core";
 }
 
 @end
