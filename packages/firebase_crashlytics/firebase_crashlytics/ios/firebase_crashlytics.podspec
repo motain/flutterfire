@@ -3,23 +3,9 @@ require 'yaml'
 pubspec = YAML.load_file(File.join('..', 'pubspec.yaml'))
 library_version = pubspec['version'].gsub('+', '-')
 
-# NO upload-symbols script for no-op iOS implementation
-# current_dir = Dir.pwd
-# calling_dir = File.dirname(__FILE__)
-# project_dir = calling_dir.slice(0..(calling_dir.index('/.symlinks')))
-# system("ruby #{current_dir}/crashlytics_add_upload_symbols -f -p #{project_dir} -n Runner.xcodeproj")
-
-if defined?($FirebaseSDKVersion)
-  Pod::UI.puts "#{pubspec['name']}: Using user specified Firebase SDK version '#{$FirebaseSDKVersion}'"
-  firebase_sdk_version = $FirebaseSDKVersion
-else
-  firebase_core_script = File.join(File.expand_path('..', File.expand_path('..', File.dirname(__FILE__))), 'firebase_core/ios/firebase_sdk_version.rb')
-  if File.exist?(firebase_core_script)
-    require firebase_core_script
-    firebase_sdk_version = firebase_sdk_version!
-    Pod::UI.puts "#{pubspec['name']}: Using Firebase SDK version '#{firebase_sdk_version}' defined in 'firebase_core'"
-  end
-end
+# iOS No-Op Implementation - No Firebase SDK version needed
+# All Firebase SDK version logic and upload-symbols script removed for no-op implementation
+Pod::UI.puts "#{pubspec['name']}: iOS no-op implementation (no Firebase SDK dependencies)"
 
 Pod::Spec.new do |s|
   s.name             = pubspec['name']
