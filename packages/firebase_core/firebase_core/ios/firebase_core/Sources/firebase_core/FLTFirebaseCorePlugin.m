@@ -74,88 +74,86 @@ static NSMutableDictionary<NSString *, NSString *> *customAuthDomains;
 
 #pragma mark - Helpers
 
-- (CoreFirebaseOptions *)optionsFromFIROptions:(NSDictionary *)options {
-  // Create mock options for no-op implementation
-  CoreFirebaseOptions *pigeonOptions = [CoreFirebaseOptions alloc];
-  pigeonOptions.apiKey = [NSNull null];
-  pigeonOptions.appId = [NSNull null];
-  pigeonOptions.messagingSenderId = [NSNull null];
-  pigeonOptions.projectId = [NSNull null];
-  pigeonOptions.databaseURL = [NSNull null];
-  pigeonOptions.storageBucket = [NSNull null];
-  pigeonOptions.deepLinkURLScheme = [NSNull null];
-  pigeonOptions.iosBundleId = [[NSBundle mainBundle] bundleIdentifier] ?: [NSNull null];
-  pigeonOptions.iosClientId = [NSNull null];
-  pigeonOptions.appGroupId = [NSNull null];
-  return pigeonOptions;
+- (CoreFirebaseOptions *)createMockFirebaseOptions {
+  // Create mock options for no-op implementation using factory method
+  // Using empty strings for required fields and nil for optional fields
+  return [CoreFirebaseOptions makeWithApiKey:@""
+                                       appId:@""
+                           messagingSenderId:@""
+                                   projectId:@""
+                                  authDomain:nil
+                                 databaseURL:nil
+                               storageBucket:nil
+                               measurementId:nil
+                                  trackingId:nil
+                           deepLinkURLScheme:nil
+                             androidClientId:nil
+                                 iosClientId:nil
+                                 iosBundleId:[[NSBundle mainBundle] bundleIdentifier]
+                                  appGroupId:nil];
 }
 
-- (CoreInitializeResponse *)initializeResponseFromAppName:(NSString *)appName {
-  CoreInitializeResponse *response = [CoreInitializeResponse alloc];
-  response.name = appName ?: @"[DEFAULT]";
-  response.isAutomaticDataCollectionEnabled = @(NO);
-  response.options = [self optionsFromFIROptions:@{}];
-  response.pluginConstants = @{};
-  return response;
+- (CoreInitializeResponse *)createMockInitializeResponseForAppName:(NSString *)appName {
+  // Create mock response for no-op implementation using factory method
+  CoreFirebaseOptions *mockOptions = [self createMockFirebaseOptions];
+  return [CoreInitializeResponse makeWithName:(appName ?: @"[DEFAULT]")
+                                      options:mockOptions
+             isAutomaticDataCollectionEnabled:@(NO)
+                              pluginConstants:@{}];
 }
 
 #pragma mark - Firebase Core Host API
 
-// No-op implementation - returns mock initialized state
-- (void)initializeCoreWithCompletion:(void (^)(CoreInitializeResponse *_Nullable,
+// No-op implementation - returns array with mock initialized state
+- (void)initializeCoreWithCompletion:(void (^)(NSArray<CoreInitializeResponse *> *_Nullable,
                                                 FlutterError *_Nullable))completion {
   // Create a mock response indicating the core is initialized
-  CoreInitializeResponse *response = [self initializeResponseFromAppName:@"[DEFAULT]"];
-  completion(response, nil);
+  // Note: Returns an array as per the protocol definition
+  CoreInitializeResponse *response = [self createMockInitializeResponseForAppName:@"[DEFAULT]"];
+  completion(@[response], nil);
 }
 
 // No-op implementation - returns mock app information
 - (void)initializeAppAppName:(NSString *)appName
-           initializeAppRequest:(CoreInitializeRequest *)request
-                      completion:(void (^)(CoreInitializeResponse *_Nullable,
-                                           FlutterError *_Nullable))completion {
-  // Create a mock response for the app
-  CoreInitializeResponse *response = [self initializeResponseFromAppName:appName];
-  if (request.options) {
-    response.options = request.options;
-  }
+        initializeAppRequest:(CoreFirebaseOptions *)initializeAppRequest
+                  completion:(void (^)(CoreInitializeResponse *_Nullable,
+                                       FlutterError *_Nullable))completion {
+  // Create a mock response for the app (no-op: ignores initializeAppRequest)
+  CoreInitializeResponse *response = [self createMockInitializeResponseForAppName:appName];
   completion(response, nil);
 }
 
-// No-op implementation - returns empty options response
+// No-op implementation - returns mock options response
 - (void)optionsFromResourceWithCompletion:
     (void (^)(CoreFirebaseOptions *_Nullable, FlutterError *_Nullable))completion {
   // Return mock options
-  CoreFirebaseOptions *options = [self optionsFromFIROptions:@{}];
+  CoreFirebaseOptions *options = [self createMockFirebaseOptions];
   completion(options, nil);
 }
 
 #pragma mark - Firebase App Host API
 
 // No-op implementation - does nothing
-- (void)deleteAppApp:(NSString *)appName
-          completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion {
-  // Just return success
-  completion(@(YES), nil);
+- (void)deleteAppName:(NSString *)appName
+           completion:(void (^)(FlutterError *_Nullable))completion {
+  // Just return success (nil error)
+  completion(nil);
 }
 
 // No-op implementation - does nothing
 - (void)setAutomaticDataCollectionEnabledAppName:(NSString *)appName
-                                          enabled:(NSNumber *)enabled
-                                       completion:(void (^)(NSNumber *_Nullable,
-                                                             FlutterError *_Nullable))completion {
-  // Just return success
-  completion(@(YES), nil);
+                                          enabled:(BOOL)enabled
+                                       completion:(void (^)(FlutterError *_Nullable))completion {
+  // Just return success (nil error)
+  completion(nil);
 }
 
 // No-op implementation - does nothing
 - (void)setAutomaticResourceManagementEnabledAppName:(NSString *)appName
-                                              enabled:(NSNumber *)enabled
-                                           completion:
-                                               (void (^)(NSNumber *_Nullable,
-                                                         FlutterError *_Nullable))completion {
-  // Just return success
-  completion(@(YES), nil);
+                                              enabled:(BOOL)enabled
+                                           completion:(void (^)(FlutterError *_Nullable))completion {
+  // Just return success (nil error)
+  completion(nil);
 }
 
 #pragma mark - FLTFirebasePlugin
