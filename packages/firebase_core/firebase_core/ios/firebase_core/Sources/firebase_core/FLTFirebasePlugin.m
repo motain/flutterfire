@@ -58,6 +58,7 @@ NSString *_Nonnull const kFIRDefaultAppNameDart = @"[DEFAULT]";
 }
 
 + (FIRApp *_Nullable)firebaseAppNamed:(NSString *_Nonnull)appName {
-  return [FIRApp allApps][[self firebaseAppNameFromDartName:appName]];
+  // No-op implementation for iOS - return nil to prevent conflicts with native iOS Firebase
+  return nil;
 }
 @end
